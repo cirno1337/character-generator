@@ -1,0 +1,83 @@
+{
+  "basic": {
+    "title": "Dane podstawowe",
+    "fields": [
+      { "key": "name", "label": "Imię/nazwisko", "placeholder": "np. Ilvaine z Doliny Szronu" },
+      { "key": "race", "label": "Rasa", "placeholder": "np. elfka, człowiek, android" },
+      { "key": "birthday", "label": "Urodziny", "placeholder": "np. 12 dzień Miesiąca Mgieł" },
+      { "key": "class", "label": "Klasa", "placeholder": "np. nauczycielka, złodziej, kapłan" },
+      { "key": "gender", "label": "Płeć", "placeholder": "np. kobieta" },
+      { "key": "height", "label": "Wzrost", "placeholder": "np. 168 cm" },
+      { "key": "subclass", "label": "Podklasa", "placeholder": "np. herborystka, kartograf" }
+    ]
+  },
+  "life_priorities": {
+    "title": "Priorytety życiowe",
+    "kind": "level",
+    "fields": [
+      { "key": "family", "label": "Rodzina" },
+      { "key": "friends", "label": "Przyjaciele" },
+      { "key": "love", "label": "Miłość" },
+      { "key": "others_opinion", "label": "Opinia innych" },
+      { "key": "justice", "label": "Sprawiedliwość" },
+      { "key": "power", "label": "Władza" },
+      { "key": "popularity", "label": "Popularność" },
+      { "key": "education", "label": "Edukacja" }
+    ]
+  },
+  "mental_axes": {
+    "title": "Cechy umysłowe",
+    "kind": "axis",
+    "fields": [
+      { "key": "kind_vs_cruel", "left": "Miły", "right": "Wredny" },
+      { "key": "bold_vs_shy", "left": "Śmiały", "right": "Nieśmiały" },
+      { "key": "pacifist_vs_aggressor", "left": "Pacyfista", "right": "Agresor" },
+      { "key": "reflective_vs_impulsive", "left": "Refleksyjny", "right": "Impulsywny" },
+      { "key": "likeable_vs_arrogant", "left": "Sympatyczny", "right": "Arogancki" },
+      { "key": "idealist_vs_pragmatist", "left": "Idealista", "right": "Pragmatyk" },
+      { "key": "extravert_vs_introvert", "left": "Ekstrawertyk", "right": "Introwertyk" },
+      { "key": "calm_vs_expressive", "left": "Spokojny", "right": "Ekspresyjny" },
+      { "key": "leader_vs_worker", "left": "Lider", "right": "Pracownik" },
+      { "key": "diligent_vs_lazy", "left": "Pracowity", "right": "Leniwy" },
+      { "key": "risktaker_vs_coward", "left": "Ryzykant", "right": "Tchórz" }
+    ]
+  },
+  "character_traits": {
+    "title": "Cechy charakteru",
+    "kind": "level",
+    "fields": [
+      { "key": "perfectionism", "label": "Perfekcjonizm" },
+      { "key": "stubbornness", "label": "Upartość" },
+      { "key": "ambition", "label": "Ambicja" },
+      { "key": "jealousy", "label": "Zazdrość" },
+      { "key": "empathy", "label": "Empatia" },
+      { "key": "talkativeness", "label": "Gadulstwo" },
+      { "key": "shyness", "label": "Nieśmiałość" },
+      { "key": "nosiness", "label": "Wścibskość" },
+      { "key": "rudeness", "label": "Opryskliwość" },
+      { "key": "politeness", "label": "Uprzejmość" },
+      { "key": "hot_temper", "label": "Porywczość" },
+      { "key": "grumpiness", "label": "Zrzędliwość" },
+      { "key": "quarrelsomeness", "label": "Kłótliwość" },
+      { "key": "calculation", "label": "Wyrachowanie" }
+    ]
+  },
+  "social_traits": {
+    "title": "Cechy społeczne",
+    "kind": "level",
+    "fields": [
+      { "key": "intelligence", "label": "Inteligencja" },
+      { "key": "life_satisfaction", "label": "Zadowolenie życiowe" },
+      { "key": "self_confidence", "label": "Pewność siebie" },
+      { "key": "eloquence", "label": "Wygadanie" },
+      { "key": "general_anxiety", "label": "Lęk uogólniony" },
+      { "key": "patience", "label": "Cierpliwość" },
+      { "key": "passion", "label": "Pasja" },
+      { "key": "charisma", "label": "Charyzma" },
+      { "key": "conformity", "label": "Konformizm" },
+      { "key": "malice", "label": "Złośliwość" },
+      { "key": "aggression", "label": "Agresja" },
+      { "key": "loneliness", "label": "Samotnictwo" }
+    ]
+  }
+}

@@ -1,0 +1,196 @@
+{
+ "dane_podstawowe": {
+  "imie_nazwisko": "Elara Vane",
+  "rasa": "Człowiek",
+  "urodziny": "14 marca",
+  "klasa": "nauczycielka",
+  "plec": "kobieta",
+  "wzrost": "168 cm",
+  "podklasa": "Mistrzyni Historii i Retoryki"
+ },
+ "koncepcja": "Elara to nauczycielka w średniozamożnym mieście akademickim, która wierzy, że wiedza jest jedynym narzędziem zdolnym do naprawy świata. Jest kobietą, która woli konfrontować idee niż miecze, choć jej odwaga objawia się w bezkompromisowym dążeniu do prawdy, nawet gdy jest ona niewygodna dla władz miasta.",
+ "motywacja": {
+  "czego_chce": "Chce stworzyć kompletny, obiektywny cykl wykładów dotyczący zapomnianych cywilizacji, aby jej uczniowie mogli zrozumieć błędy przeszłości.",
+  "dlaczego": "Uważa, że społeczeństwo powtarza te same błędy z powodu braku rzetelnej edukacji historycznej.",
+  "co_poswieci": "Często poświęca swój czas wolny, zdrowie (częste bóle głowy od nadmiaru pracy) i relacje towarzyskie na rzecz kwerendy w zakurzonych archiwach.",
+  "czego_boi_sie_stracic": "Autorytetu i wiarygodności – dla Elary bycie 'niekompetentną' w oczach uczniów jest gorsze niż jakakolwiek fizyczna porażka."
+ },
+ "przeszlosc": {
+  "dziecinstwo_i_rodzina": "Dorastała w domu pełnym książek, gdzie jej rodzice – skromni skrybowie – nauczyli ją, że każda informacja ma swoją wagę. Była dzieckiem dociekliwym, często zadającym pytania, na które nie było prostych odpowiedzi.",
+  "edukacja": "Stypendystka jednej z najlepszych akademii, gdzie wyróżniła się nie tylko pamięcią, ale i umiejętnością łączenia faktów z różnych dziedzin. Zawsze była 'tą ambitną dziewczyną', która zostawała po lekcjach do późnej nocy.",
+  "wazne_relacje": "Jej mentorem był profesor Aris, który nauczył ją, że historia to nie tylko daty, ale emocje ludzi. Jego śmierć przed laty zmobilizowała ją do kontynuowania jego badań.",
+  "sukcesy_i_porazki": "Jej największym sukcesem jest odzyskanie zapomnianego manuskryptu z Biblioteki Miejskiej. Największą porażką – nieudana próba przekonania rady miasta do zmiany programu nauczania, co spotkało się z lekceważącym śmiechem.",
+  "wydarzenia_ksztaltujace": [
+   {
+    "wydarzenie": "Odnalezienie zakazanej kroniki",
+    "wplyw": "Zrozumiała, że wiedza może być niebezpieczna i że jej rola jako nauczycielki to nie tylko przekazywanie faktów, ale też ochrona uczniów przed ich błędną interpretacją."
+   },
+   {
+    "wydarzenie": "Konfrontacja z radą miasta",
+    "wplyw": "Uświadomiła sobie, że systemowa zmiana wymaga determinacji i odwagi, której początkowo jej brakowało."
+   }
+  ]
+ },
+ "osobowosc": {
+  "zachowanie": "Elara jest osobą opanowaną, która mówi wyraźnie i z namysłem. W klasie jest godną uwielbienia, ale i nieco przerażającą postacią – gdy ktoś kłamie, jej oczy natychmiast to wyłapują, a ona z delikatnym uśmiechem prosi o 'wyjaśnienie nieścisłości'.",
+  "myslenie": "Analityczne i skrupulatne. Zanim coś powie, mentalnie sprawdza, czy jej argumenty są logicznie spójne. Ma tendencję do nadmiernego analizowania prostych sytuacji, co czasem prowadzi do paraliżu decyzyjnego w sprawach prywatnych.",
+  "sposob_mowienia": "Umiarkowany ton, bogate słownictwo, lekko staromodna składnia. Często używa metafor historycznych, by ilustrować współczesne problemy.",
+  "wobec_obcych": "Uprzejma, ale zdystansowana. Potrzebuje czasu, by pozwolić komuś wejść do jej 'bańki' prywatności.",
+  "wobec_przyjaciol": "Bardzo lojalna i wspierająca, choć może być irytująco doradcza i zawsze będzie chciała 'naprawić' ich problemy poprzez analizę faktów.",
+  "pod_presja": "Zamiast panikować, zaczyna mówić szybciej, a jej perfekcjonizm objawia się w kompulsywnym układaniu przedmiotów lub notatek w idealne rzędy.",
+  "mocne_strony": [
+   "Niezachwiana cierpliwość w tłumaczeniu trudnych koncepcji",
+   "Zdolność do dostrzegania drobnych szczegółów w dokumentach",
+   "Odważne stawianie czoła niepopularnym opiniom"
+  ],
+  "slabosci": [
+   "Skłonność do hipochondrii wynikająca z przemęczenia",
+   "Trudność w odpuszczaniu drobnych błędów innych ludzi",
+   "Nadmierna koncentracja na pracy kosztem relacji osobistych"
+  ],
+  "sprzecznosci": [
+   "Jest ryzykantką, która jednak boi się ryzykować własny status zawodowy.",
+   "Jest niezwykle wścibska, ale jednocześnie bardzo dba o własną prywatność i granice.",
+   "Dąży do obiektywizmu, ale jej pasja do historii sprawia, że czasem nieświadomie faworyzuje konkretne narracje."
+  ]
+ },
+ "swiatopoglad": [
+  {
+   "temat": "Wiedza",
+   "poglad": "Wiedza jest najwyższym dobrem, ale musi być przekazywana z odpowiedzialnością."
+  },
+  {
+   "temat": "Zmiana",
+   "poglad": "Zmiana powinna zachodzić ewolucyjnie poprzez edukację, a nie gwałtownie poprzez rewolucję."
+  },
+  {
+   "temat": "Władza",
+   "poglad": "Władza bez wiedzy prowadzi do tyranii; wiedza bez władzy pozostaje bezużyteczna."
+  }
+ ],
+ "pasje": [
+  {
+   "nazwa": "Paleografia",
+   "opis": "Badanie starożytnych pism i technik kaligraficznych."
+  },
+  {
+   "nazwa": "Herbata",
+   "opis": "Zbieranie rzadkich odmian z różnych regionów i testowanie ich właściwości."
+  },
+  {
+   "nazwa": "Kolekcjonerstwo",
+   "opis": "Zbieranie starych, niszczejących map, które sama potem nanosi i uzupełnia."
+  }
+ ],
+ "relacje": [
+  {
+   "z_kim": "Marek (Uczeń)",
+   "wzorzec": "Marek jest genialnym, ale niegrzecznym uczniem. Elara widzi w nim swój dawny potencjał i poświęca mu więcej czasu niż innym, co budzi zazdrość w innych nauczycielach."
+  },
+  {
+   "z_kim": "Pani Helena (Bibliotekarka)",
+   "wzorzec": "Najlepsza przyjaciółka. Razem spędzają wieczory na segregowaniu woluminów. Helena jest jedyną osobą, przy której Elara pozwala sobie na żarty."
+  },
+  {
+   "z_kim": "Burmistrz Varek",
+   "wzorzec": "Relacja napięta. Varek uważa Elarę za 'mądrą głupią', która za dużo pyta o historię podatków i własności ziemskiej."
+  },
+  {
+   "z_kim": "Rodzice",
+   "wzorzec": "Dobre relacje, oparte na wzajemnym szacunku do pracy. Często przesyłają sobie listy z opisami nowych odkryć."
+  }
+ ],
+ "codziennosc": "Elara wstaje o 6:00, parzy herbatę i poświęca godzinę na przeglądanie notatek przed lekcjami. W szkole jest punktualna, jej biurko jest zawsze czyste, a na tablicy widnieje idealnie prosta kaligrafia. Po pracy wraca do domu, gdzie często pracuje do późnych godzin przy świetle lampy, aż jej oczy zaczną piec.",
+ "sytuacje_graniczne": [
+  {
+   "sytuacja": "Uczeń zostaje złapany na kradzież książki.",
+   "reakcja": "Zamiast krzyczeć, Elara zapyta go, co czuł, trzymając w ręku skradziony wolumin, i dlaczego uważał, że ta konkretna wiedza należy tylko do niego.",
+   "decyzja": "Daje mu szansę na naprawienie błędu poprzez napisanie eseju o etyce własności.",
+   "konsekwencja": "Uczeń czuje się winny, ale też głęboko zrozumiany.",
+   "co_ujawnia": "Jej głębokie przekonanie, że edukacja to proces naprawczy, a nie tylko karny."
+  },
+  {
+   "sytuacja": "Odkrycie w archiwum podważa oficjalną wersję historii miasta.",
+   "reakcja": "Czuje dreszcz ekscytacji wymieszany z lękiem przed reakcją władz.",
+   "decyzja": "Publikuje fragmenty w prywatnym dzienniku, czekając na odpowiedni moment, by przedstawić je publicznie.",
+   "konsekwencja": "Zostaje oskarżona o szerzenie dezinformacji, co zmusza ją do podjęcia ryzyka.",
+   "co_ujawnia": "Jej odwagę i perfekcjonizm w dążeniu do prawdy."
+  },
+  {
+   "sytuacja": "Nagłe zachorowanie na jedną z lekcji.",
+   "reakcja": "Mimo bólu głowy i słabości, Elara upiera się, by dokończyć wykład.",
+   "decyzja": "Mówi cicho, niemal szeptem, ale z taką intensywnością, że uczniowie siedzą w absolutnej ciszy.",
+   "konsekwencja": "Szybko traci przytomność po lekcji, co budzi niepokój uczniów.",
+   "co_ujawnia": "Jej obsesyjną potrzebę dotrzymywania standardów."
+  },
+  {
+   "sytuacja": "Spotkanie z kimś, kto otwarcie wyśmiewa naukę.",
+   "reakcja": "Elara nie traci spokoju ani nie podnosi głosu.",
+   "decyzja": "Zaczyna zadawać serię pytań retorycznych, które zmuszają rozmówcę do logicznego zderzenia się z własną ignorancją.",
+   "konsekwencja": "Rozmówca ostatecznie milknie, czując się intelektualnie przytłoczony.",
+   "co_ujawnia": "Jej intelektualną dominację i brak agresji fizycznej."
+  },
+  {
+   "sytuacja": "Utrata cennego manuskryptu z własnej kolekcji.",
+   "reakcja": "Przez chwilę zamiera, a potem zaczyna metodycznie sprawdzać każdy ślad.",
+   "decyzja": "Zamiast panikować, zaczyna działać jak detektyw, analizując możliwe drogi ucieczki.",
+   "konsekwencja": "Odzyskuje przedmiot, ale traci zaufanie do bezpieczeństwa własnego domu.",
+   "co_ujawnia": "Jej analityczny umysł i skłonność do ryzykowania własnego spokoju dla dobra nauki."
+  },
+  {
+   "sytuacja": "Dostanie propozycji wyższej pensji za ukrycie faktów w podręczniku.",
+   "reakcja": "Uśmiecha się z lekkim politowaniem.",
+   "decyzja": "Odrzuca ofertę natychmiast, nie wahając się ani sekundy.",
+   "konsekwencja": "Traci szansę na poprawę sytuacji finansowej rodziny, ale zachowuje czyste sumienie.",
+   "co_ujawnia": "Jej absolutną integralność moralną w kwestii edukacji."
+  }
+ ],
+ "konflikt_wewnetrzny": {
+  "przekonanie_o_sobie": "Uważa się za osobę rozsądną i obiektywną.",
+  "prawda": "Jej pasja do historii jest tak silna, że często staje się subiektywna i fanatyyczna.",
+  "czego_chce": "Chce być docenioną autorytetem.",
+  "czego_potrzebuje": "Potrzebuje zrozumieć, że nie może kontrolować wszystkiego i że błędy jej uczniów są częścią procesu nauki, a nie jej osobistą porażką."
+ },
+ "rozwoj": {
+  "mozliwy_luk": "Może stać się zbyt izolowana w swoich badaniach, tracąc kontakt z rzeczywistością poza murami biblioteki.",
+  "co_moze_zmienic": "Może nauczyć się, że edukacja to nie tylko przekazywanie faktów, ale też budowanie relacji i empatia.",
+  "czego_moze_sie_nauczyc": "Może zrozumieć, że czasem trzeba pozwolić na niejasność, zamiast dążyć do absolutnej, sterylnej prawdy.",
+  "co_moze_zlamac": "Jej perfekcjonizm może doprowadzić do załamania nerwowego lub całkowitego wycofania się z życia publicznego.",
+  "co_wzmocni": "Jej odwaga w konfrontowaniu niesprawiedliwości może uczynić z niej nieformalną liderkę oporu przeciwko cenzurze.",
+  "czego_nie_zmieni": "Jej głębokiej miłości do wiedzy i przekonania, że edukacja jest fundamentem cywilizacji."
+ },
+ "detale": [
+  "Zawsze nosi przy sobie mały, srebrny kompas, który dostała od mentora.",
+  "Ma nawyk poprawiania kołnierzyka innych osób, gdy czuje się nieswojo.",
+  "Pije tylko herbatę z dodatkiem suszonych kwiatów lipy.",
+  "Jej biurko jest podzielone na sekcje: 'Do zbadania', 'W trakcie' i 'Zarchiwizowane'.",
+  "Często mruży oczy, gdy czyta coś, co uważa za niechlujne.",
+  "Ma na lewym nadgarstku delikatną bliznę po oparzeniu podczas pracy w archiwum.",
+  "Zawsze nosi okulary w cienkich oprawkach, nawet jeśli ich nie potrzebuje, gdy czyta.",
+  "Ma tendencję do gwizdania cichej, nostalgicznej melodii, gdy jest bardzo skupiona.",
+  "W jej torbie zawsze znajduje się zapasowy tusz do pióra i kilka czystych kartek.",
+  "Gdy jest zdenerwowana, zaczyna mówić bardzo wolno i wyraźnie."
+ ],
+ "wypowiedzi": [
+  {
+   "kontekst": "Do ucznia, który nie chce się uczyć.",
+   "kwestia": "Wiedza to nie jest ciężar, który musisz dźwigać, ale światło, które pozwala ci uniknąć potknięć."
+  },
+  {
+   "kontekst": "Podczas kłótni z urzędnikiem.",
+   "kwestia": "Pańska ignorancja nie jest tylko brakiem wiedzy, to aktywna decyzja o pozostaniu w ciemności."
+  },
+  {
+   "kontekst": "Do przyjaciółki, przy herbacie.",
+   "kwestia": "Czy zauważyłaś, jak ten manuskrypt opisuje procesy myślowe ludzi sprzed trzech wieków? To fascynujące."
+  },
+  {
+   "kontekst": "Podczas wykładu o historii.",
+   "kwestia": "Historia nie jest martwym tekstem; to krzyk przodków, który wciąż rezonuje w naszych dzisiejszych wyborach."
+  },
+  {
+   "kontekst": "Gdy uczeń zadaje trudne pytanie.",
+   "kwestia": "To doskonałe pytanie. Właśnie takie pytania są fundamentem prawdziwego zrozumienia."
+  }
+ ]
+}

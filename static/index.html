@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorium Postaci</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎭</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">🎭</span>
+      <div>
+        <h1>Laboratorium Postaci</h1>
+        <p>lokalny generator bohaterów powieści</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-saved" class="btn ghost" type="button">📚 Zapisane <span id="saved-count" class="count"></span></button>
+      <div id="status" class="status" title="Status lokalnego modelu">
+        <span class="dot"></span><span id="status-text">Sprawdzam model…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: configuration -->
+    <section class="config" aria-label="Konfiguracja postaci">
+      <div class="legend">
+        <span><i class="ico lock">🔒</i> twoja wartość (zablokowana)</span>
+        <span><i class="ico dice">🎲</i> wylosowana</span>
+        <span><i class="ico unset">?</i> puste = do wylosowania</span>
+      </div>
+
+      <div class="card" id="card-basic">
+        <div class="card-head"><h2>Dane podstawowe</h2><span class="card-meta"></span></div>
+        <div class="basic-grid" id="basic-grid"></div>
+        <p class="hint">Puste pola uzupełni model – dopasuje je do świata i opisu.</p>
+      </div>
+
+      <div class="card" id="card-life_priorities">
+        <div class="card-head"><h2>Priorytety życiowe</h2><span class="card-meta"></span></div>
+        <div class="scales" data-section="life_priorities"></div>
+      </div>
+
+      <div class="card" id="card-mental_axes">
+        <div class="card-head"><h2>Cechy umysłowe</h2><span class="card-meta"></span></div>
+        <div class="scales axes" data-section="mental_axes"></div>
+      </div>
+
+      <div class="card" id="card-character_traits">
+        <div class="card-head"><h2>Cechy charakteru</h2><span class="card-meta"></span></div>
+        <div class="scales" data-section="character_traits"></div>
+      </div>
+
+      <div class="card" id="card-social_traits">
+        <div class="card-head"><h2>Cechy społeczne</h2><span class="card-meta"></span></div>
+        <div class="scales" data-section="social_traits"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Dodatkowy opis</h2></div>
+        <label class="sr-only" for="prompt">Dodatkowy opis / świat / pomysł</label>
+        <textarea id="prompt" rows="7" placeholder="To ma być młoda elfka żyjąca w dystopijnym mieście.
+Jest córką arystokratycznej rodziny, ale uciekła z domu.
+Chcę, żeby miała skomplikowaną relację z władzą…"></textarea>
+        <p class="hint">Świat, gatunek, rola w fabule, relacje, klimat – wszystko, co ważne. Ten opis ma pierwszeństwo przed wylosowanymi wartościami.</p>
+      </div>
+
+      <div class="actions">
+        <div class="actions-row">
+          <button id="btn-roll" class="btn" type="button" title="Wylosuj tylko puste pola">🎲 Losuj cechy</button>
+          <button id="btn-reroll" class="btn" type="button" title="Wylosuj od nowa wszystko, czego nie ustawiłeś sam">🔁 Losuj ponownie</button>
+          <button id="btn-reset" class="btn" type="button" title="Wyczyść wylosowane wartości, zostaw swoje">♻️ Resetuj losowe</button>
+          <button id="btn-clear" class="btn ghost danger" type="button" title="Wyczyść wszystko, łącznie z Twoimi wartościami">🗑 Wyczyść</button>
+        </div>
+        <button id="btn-generate" class="btn primary big" type="button">✨ Generuj postać</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: result -->
+    <section class="result" aria-label="Wygenerowana postać" aria-live="polite">
+      <div class="result-toolbar" id="result-toolbar" hidden>
+        <button id="btn-regen" class="btn" type="button" title="Nowa interpretacja tej samej karty (bez losowania)">🔄 Regeneruj opis</button>
+        <button id="btn-reroll-gen" class="btn" type="button" title="Przelosuj niezablokowane wartości i wygeneruj nową postać">🎲 Przelosuj wartości</button>
+        <button id="btn-copy" class="btn" type="button">📋 Kopiuj</button>
+        <button id="btn-save" class="btn" type="button">💾 Zapisz</button>
+        <button id="btn-md" class="btn ghost" type="button">⬇ Markdown</button>
+        <button id="btn-json" class="btn ghost" type="button">⬇ JSON</button>
+      </div>
+      <div id="stale" class="notice" hidden>Karta zmieniła się od ostatniego generowania. <button class="link" id="btn-stale-regen" type="button">Wygeneruj ponownie</button></div>
+      <div id="result-body" class="result-body"></div>
+    </section>
+  </main>
+
+  <!-- Saved characters drawer -->
+  <div id="drawer" class="drawer" hidden>
+    <div class="drawer-backdrop" data-close></div>
+    <aside class="drawer-panel" role="dialog" aria-label="Zapisane postacie">
+      <div class="drawer-head">
+        <h2>Zapisane postacie</h2>
+        <button class="btn ghost" type="button" data-close>✕</button>
+      </div>
+      <div id="saved-list" class="saved-list"></div>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
