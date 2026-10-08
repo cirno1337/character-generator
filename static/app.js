@@ -17,6 +17,7 @@ let result = null;    // { format, character | markdown, warning, generatedAt, s
 let busy = false;
 let abortCtl = null;
 let llmOk = false;
+let publicMode = false;   // set from /api/status – public site: saved characters live in this browser only
 
 // ---------------------------------------------------------------------------- utils
 
@@ -400,7 +401,7 @@ function showProgress(tokens, secs) {
 
 function showError(title, html, withRetry) {
   $("#result-toolbar").hidden = !result;
-  const cmd = llmOk ? "" : `<p>Uruchom model: <code>~/.local/bin/llama-start.sh</code></p>`;
+  const cmd = llmOk || publicMode ? "" : `<p>Uruchom model: <code>~/.local/bin/llama-start.sh</code></p>`;
   $("#result-body").innerHTML = `
     <div class="error-box">
       <h3>⚠️ ${esc(title)}</h3>
@@ -453,10 +454,48 @@ function exportJSON() {
 }
 
 // ---------------------------------------------------------------------------- saved characters
+// Local app: stored by server.py (data/characters.json). Public site: localStorage of the visitor.
+
+const SAVED_KEY = "cg-saved-v1";
+const localSaved = {
+  all() {
+    try { return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]"); } catch { return []; }
+  },
+  write(items) { localStorage.setItem(SAVED_KEY, JSON.stringify(items)); },
+};
+
+const savedStore = {
+  async list() {
+    if (!publicMode) return (await fetch("/api/characters")).json();
+    return localSaved.all()
+      .map(({ id, timestamp, name, summary }) => ({ id, timestamp, name, summary }))
+      .sort((a, b) => (b.timestamp || "").localeCompare(a.timestamp || ""));
+  },
+  async get(id) {
+    if (!publicMode) return (await fetch(`/api/characters/${encodeURIComponent(id)}`)).json();
+    return localSaved.all().find((x) => x.id === id);
+  },
+  async save(item) {
+    if (!publicMode) {
+      const r = await fetch("/api/characters", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(item),
+      });
+      if (!r.ok) throw new Error();
+      return;
+    }
+    const items = localSaved.all();
+    items.push({ ...item, id: crypto.randomUUID().slice(0, 12), timestamp: new Date().toISOString().slice(0, 19) });
+    localSaved.write(items);
+  },
+  async remove(id) {
+    if (!publicMode) return fetch(`/api/characters/${encodeURIComponent(id)}`, { method: "DELETE" });
+    localSaved.write(localSaved.all().filter((x) => x.id !== id));
+  },
+};
 
 async function refreshSavedCount() {
   try {
-    const list = await (await fetch("/api/characters")).json();
+    const list = await savedStore.list();
     $("#saved-count").textContent = list.length ? `(${list.length})` : "";
     return list;
   } catch {
@@ -468,12 +507,8 @@ async function saveCharacter() {
   if (!result) return;
   const summary = result.format === "json" ? result.character.koncepcja : (result.markdown || "").slice(0, 300);
   try {
-    const r = await fetch("/api/characters", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: characterName(result), summary, spec: result.spec, prompt: result.spec.additional_prompt, result }),
-    });
-    if (!r.ok) throw new Error();
-    toast(`Zapisano: ${characterName(result)} 💾`);
+    await savedStore.save({ name: characterName(result), summary, spec: result.spec, prompt: result.spec.additional_prompt, result });
+    toast(publicMode ? `Zapisano w tej przeglądarce: ${characterName(result)} 💾` : `Zapisano: ${characterName(result)} 💾`);
     refreshSavedCount();
   } catch {
     toast("Nie udało się zapisać postaci.", true);
@@ -508,7 +543,7 @@ async function onSavedClick(e) {
   if (btn.dataset.act === "load") {
     if (busy) return toast("Poczekaj na koniec generowania.", true);
     try {
-      const it = await (await fetch(`/api/characters/${encodeURIComponent(id)}`)).json();
+      const it = await savedStore.get(id);
       spec = adoptSpec(it.spec);
       result = it.result ? { ...it.result, spec: cloneSpec(spec) } : null;
       if (result) result.specKey = specKey(spec);
@@ -522,7 +557,7 @@ async function onSavedClick(e) {
     }
   } else if (btn.dataset.act === "del") {
     confirmClick(btn, async () => {
-      await fetch(`/api/characters/${encodeURIComponent(id)}`, { method: "DELETE" });
+      await savedStore.remove(id);
       openDrawer();
     }, "Usunąć?");
   }
@@ -535,9 +570,16 @@ async function refreshStatus() {
   try {
     const s = await (await fetch("/api/status", { cache: "no-store" })).json();
     llmOk = !!s.ok;
+    publicMode = !!s.public;
     box.className = "status " + (s.ok ? "ok" : s.loading ? "loading" : "bad");
-    txt.textContent = s.ok ? "Gemma 4 połączona" : s.loading ? "Gemma 4 się ładuje…" : "Gemma 4 niedostępna";
-    box.title = s.ok ? `${s.model} · kontekst ${s.n_ctx} · ${s.llama_url}` : s.error;
+    if (s.sleeping) {
+      // Public site: the model runs on the author's computer and starts on the first generation.
+      txt.textContent = "Gemma 4 – uruchomi się przy generowaniu";
+      box.title = "Model działa na komputerze autora. Pierwsze generowanie może potrwać dłużej (ładowanie modelu).";
+    } else {
+      txt.textContent = s.ok ? "Gemma 4 połączona" : s.loading ? "Gemma 4 się ładuje…" : "Gemma 4 niedostępna";
+      box.title = s.ok ? `${s.model} · kontekst ${s.n_ctx} · ${s.llama_url}` : s.error;
+    }
   } catch {
     llmOk = false;
     box.className = "status bad";
@@ -545,7 +587,7 @@ async function refreshStatus() {
     box.title = "Uruchom ./run.sh";
   }
   clearTimeout(refreshStatus._t);
-  refreshStatus._t = setTimeout(refreshStatus, llmOk ? 15000 : 4000);
+  refreshStatus._t = setTimeout(refreshStatus, publicMode ? 60000 : llmOk ? 15000 : 4000);
 }
 
 // ---------------------------------------------------------------------------- init
@@ -584,7 +626,7 @@ async function init() {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") generate();
   });
 
-  refreshStatus();
+  await refreshStatus();   // sets publicMode before the saved list is read
   refreshSavedCount();
 }
 

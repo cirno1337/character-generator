@@ -5,7 +5,13 @@ Serves the static UI, proxies generation to the local llama.cpp server
 (OpenAI-compatible API) and stores saved characters in data/characters.json.
 
     python3 server.py            # http://127.0.0.1:8765
-Env: CG_PORT, CG_HOST, LLAMA_URL (default http://127.0.0.1:8081)
+Env: CG_PORT, CG_HOST, LLAMA_URL (default http://127.0.0.1:8081),
+     LLAMA_API_KEY / LLAMA_API_KEY_FILE (llama-server --api-key; default ~/.config/llama/api-key if present)
+Public mode (CG_PUBLIC=1, for hosting on the internet):
+     - saved characters live only in the visitor's browser (server storage disabled),
+     - /api/status does not touch llama.cpp (the model may be started on demand - polling would keep it awake),
+     - rate limit per client IP (CG_RATE_LIMIT, default 3/3600 = 3 per hour) and per day (CG_DAILY_LIMIT, 40),
+     - no internal addresses in messages.
 """
 
 import json
@@ -17,6 +23,7 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+from collections import deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -30,15 +37,35 @@ LLAMA_URL = os.environ.get("LLAMA_URL", "http://127.0.0.1:8081").rstrip("/")
 HOST = os.environ.get("CG_HOST", "127.0.0.1")
 PORT = int(os.environ.get("CG_PORT", "8765"))
 
+
+def _read_key() -> str:
+    if os.environ.get("LLAMA_API_KEY"):
+        return os.environ["LLAMA_API_KEY"].strip()
+    path = Path(os.environ.get("LLAMA_API_KEY_FILE") or Path.home() / ".config" / "llama" / "api-key")
+    try:
+        return path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+
+
+LLAMA_API_KEY = _read_key()
+PUBLIC = os.environ.get("CG_PUBLIC") == "1"
+_rl_n, _rl_window = (int(x) for x in os.environ.get("CG_RATE_LIMIT", "3/3600").split("/"))
+DAILY_LIMIT = int(os.environ.get("CG_DAILY_LIMIT", "40"))
+
 TEMPERATURE = 0.8
 TOP_P = 0.95
 MAX_TOKENS = 7000
 CONNECT_TIMEOUT = 5
 READ_TIMEOUT = 180          # max silence between streamed chunks
+WAKE_TIMEOUT = 150          # first request may start the model on demand (systemd socket activation)
+OFFLINE_CACHE = 120         # public mode: remember a failed connection this long
 TOTAL_TIMEOUT = 900         # hard cap for one generation
 
 MSG_UNREACHABLE = ("Nie udało się połączyć z lokalnym Gemma 4 ({url}). "
                    "Sprawdź, czy llama-start.sh jest uruchomiony.")
+MSG_PUBLIC_OFFLINE = ("Model jest teraz niedostępny – działa na komputerze autora, "
+                      "który jest pewnie wyłączony. Spróbuj później.")
 
 generation_lock = threading.Lock()
 data_lock = threading.Lock()
@@ -50,9 +77,38 @@ class LlamaError(Exception):
 
 # --------------------------------------------------------------------------- llama.cpp
 
-def llama_status() -> dict:
+def _headers() -> dict:
+    h = {"Content-Type": "application/json"}
+    if LLAMA_API_KEY:
+        h["Authorization"] = f"Bearer {LLAMA_API_KEY}"
+    return h
+
+
+_last_offline = 0.0
+
+
+def public_status() -> dict:
+    """Public mode: never contact llama.cpp just for status (it would wake the model up)."""
+    if time.time() - _last_offline < OFFLINE_CACHE:
+        return {"ok": False, "public": True, "error": MSG_PUBLIC_OFFLINE}
+    return {"ok": True, "public": True, "sleeping": True, "model": "Gemma 4"}
+
+
+def llama_status(timeout: float = CONNECT_TIMEOUT) -> dict:
+    global _last_offline
+    st = _llama_status(timeout)
+    if PUBLIC:
+        st.pop("llama_url", None)
+        if not st["ok"]:
+            _last_offline = time.time()
+            st["error"] = MSG_PUBLIC_OFFLINE
+    return st
+
+
+def _llama_status(timeout: float) -> dict:
     try:
-        with urllib.request.urlopen(f"{LLAMA_URL}/v1/models", timeout=CONNECT_TIMEOUT) as r:
+        req = urllib.request.Request(f"{LLAMA_URL}/v1/models", headers=_headers())
+        with urllib.request.urlopen(req, timeout=timeout) as r:
             data = json.loads(r.read())
         models = data.get("data") or []
         m = models[0] if models else {}
@@ -82,13 +138,13 @@ def _open_completion(messages: list, max_tokens: int, use_schema: bool):
     else:
         body["response_format"] = {"type": "json_object"}
     req = urllib.request.Request(f"{LLAMA_URL}/v1/chat/completions", data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json"}, method="POST")
+                                 headers=_headers(), method="POST")
     return urllib.request.urlopen(req, timeout=READ_TIMEOUT)
 
 
 def stream_completion(messages: list, on_progress):
     """Yields nothing; returns (text, finish_reason). Calls on_progress(tokens, chars)."""
-    status = llama_status()
+    status = llama_status(timeout=WAKE_TIMEOUT)
     if not status["ok"]:
         raise LlamaError(status["error"])
     n_ctx = status.get("n_ctx") or 8192
@@ -107,7 +163,7 @@ def stream_completion(messages: list, on_progress):
                 raise LlamaError("Opis jest za długi dla kontekstu modelu. Skróć dodatkowy opis.")
             raise LlamaError(f"Serwer LLM zwrócił błąd HTTP {e.code}: {detail}")
         except (urllib.error.URLError, ConnectionError, socket.timeout, TimeoutError):
-            raise LlamaError(MSG_UNREACHABLE.format(url=LLAMA_URL))
+            raise LlamaError(MSG_PUBLIC_OFFLINE if PUBLIC else MSG_UNREACHABLE.format(url=LLAMA_URL))
 
     parts, tokens, finish = [], 0, None
     started = last = time.monotonic()
@@ -263,6 +319,34 @@ def write_saved(items: list) -> None:
     tmp.replace(DATA_FILE)
 
 
+# --------------------------------------------------------------------------- rate limiting (public mode)
+
+_rl_lock = threading.Lock()
+_rl_hits: dict[str, deque] = {}
+_daily = {"day": "", "count": 0}
+
+
+def rate_limit(ip: str) -> str | None:
+    """Returns an error message when the client is over the limit, otherwise records the hit."""
+    now = time.time()
+    with _rl_lock:
+        today = time.strftime("%Y-%m-%d")
+        if _daily["day"] != today:
+            _daily.update(day=today, count=0)
+            _rl_hits.clear()
+        if _daily["count"] >= DAILY_LIMIT:
+            return "Dzienny limit generowań na tej stronie został wyczerpany. Zapraszam jutro!"
+        hits = _rl_hits.setdefault(ip, deque())
+        while hits and now - hits[0] > _rl_window:
+            hits.popleft()
+        if len(hits) >= _rl_n:
+            wait = int(_rl_window - (now - hits[0])) // 60 + 1
+            return f"Limit: {_rl_n} postacie na {_rl_window // 60} min. Spróbuj ponownie za ok. {wait} min."
+        hits.append(now)
+        _daily["count"] += 1
+    return None
+
+
 # --------------------------------------------------------------------------- HTTP
 
 class Handler(BaseHTTPRequestHandler):
@@ -281,16 +365,24 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _client_ip(self) -> str:
+        # Behind Cloudflare Tunnel the real client is in CF-Connecting-IP.
+        return (self.headers.get("CF-Connecting-IP")
+                or (self.headers.get("X-Forwarded-For") or "").split(",")[0].strip()
+                or self.client_address[0])
+
     def _body(self):
         n = int(self.headers.get("Content-Length") or 0)
-        if n > 5_000_000:
+        if n > (100_000 if PUBLIC else 5_000_000):
             raise ValueError("too large")
         return json.loads(self.rfile.read(n) or b"{}")
 
     def do_GET(self):
         path = self.path.split("?", 1)[0]
         if path == "/api/status":
-            return self._json(llama_status())
+            return self._json(public_status() if PUBLIC else llama_status())
+        if PUBLIC and path.startswith("/api/characters"):
+            return self._json({"error": "Zapis na serwerze jest wyłączony – postacie zapisują się w przeglądarce."}, 404)
         if path == "/api/characters":
             with data_lock:
                 items = load_saved()
@@ -310,7 +402,15 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             return self._json({"error": "Niepoprawne żądanie."}, 400)
         if path == "/api/generate":
+            if PUBLIC and generation_lock.locked():
+                return self._json({"error": "Trwa już inne generowanie – poczekaj na jego zakończenie."}, 409)
+            if PUBLIC and not public_status()["ok"]:   # known offline - don't burn the visitor's limit
+                return self._json({"error": MSG_PUBLIC_OFFLINE}, 503)
+            if PUBLIC and (msg := rate_limit(self._client_ip())):
+                return self._json({"error": msg}, 429)
             return self._generate(body)
+        if PUBLIC:
+            return self._json({"error": "Nie znaleziono."}, 404)
         if path == "/api/characters":
             item = {
                 "id": uuid.uuid4().hex[:12],
@@ -330,7 +430,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         path = self.path.split("?", 1)[0]
-        if path.startswith("/api/characters/"):
+        if not PUBLIC and path.startswith("/api/characters/"):
             cid = path.rsplit("/", 1)[1]
             with data_lock:
                 items = load_saved()
@@ -392,7 +492,8 @@ def main():
     mimetypes.add_type("application/javascript", ".js")
     srv = ThreadingHTTPServer((HOST, PORT), Handler)
     srv.daemon_threads = True
-    print(f"Generator postaci: http://{HOST}:{PORT}   (LLM: {LLAMA_URL})", flush=True)
+    mode = f"PUBLICZNY, limit {_rl_n}/{_rl_window}s, {DAILY_LIMIT}/dzień" if PUBLIC else "lokalny"
+    print(f"Generator postaci: http://{HOST}:{PORT}   (LLM: {LLAMA_URL}, klucz API: {'tak' if LLAMA_API_KEY else 'nie'}, tryb: {mode})", flush=True)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

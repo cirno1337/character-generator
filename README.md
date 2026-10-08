@@ -19,6 +19,16 @@ Open **http://127.0.0.1:8765**
 
 Environment variables: `CG_PORT` (8765), `CG_HOST` (127.0.0.1), `LLAMA_URL` (http://127.0.0.1:8081).
 
+## Public hosting (debowski.org)
+
+`CG_PUBLIC=1` turns on public mode – used for https://postacie.debowski.org (Docker on the home server,
+Cloudflare Tunnel). The model still runs on the author's PC and is started on demand.
+
+* Saved characters are stored in the **visitor's browser** (localStorage); server-side storage is disabled.
+* `/api/status` never contacts llama.cpp (polling would keep the on-demand model awake); the model wakes on generation.
+* Rate limit per client IP (`CG_RATE_LIMIT=3/3600`) and per day (`CG_DAILY_LIMIT=40`), one generation at a time.
+* `LLAMA_API_KEY` / `LLAMA_API_KEY_FILE` (default `~/.config/llama/api-key`) is sent as a Bearer token to llama-server.
+
 ## How it works
 
 ```
